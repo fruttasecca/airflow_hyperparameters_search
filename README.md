@@ -1,6 +1,7 @@
 # airflow_hyperparameters_search
 Quick setup for a dockerized and scalable hyperparameter search for ML models using airflow.
 
+#### What this is
 Something simple I've come up with
 to try out airflow. It allows to distribute
 the training of multiple models, can serve
@@ -28,13 +29,13 @@ dataset, followed by N tasks trying out different hyperparameters
 of a sklearn model, followed by an aggregation task which collects
 results and prints the best found hyperparameters.
 
-How to try out from scratch:
+#### How to try out from scratch:
 1) Go in /docker and run  
 ``docker-compose up``
 3) Launch the DAG from the web interface at 127.0.0.1:9080 by
 unpausing it and then triggering it.
 
-How to use this for yourself:
+#### How to use this for yourself:
 1) Define your DAG (dags/hyperparam_search.py can serve as a starting point).
 2) Build your image by modifying docker/airflow_with_dags.dockerfile accordingly. If
 you push new DAGS and want to rebuild to pull DAGs from your repository
