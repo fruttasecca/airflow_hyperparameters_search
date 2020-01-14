@@ -1,0 +1,104 @@
+version: '3'
+services:
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis:6.0-rc1
+    expose:
+      - "6379"
+    command: redis-server
+    restart: always
+    deploy:
+      replicas: 1
+
+  postgres:
+    container_name: postgres
+    image: postgres:9.6.16
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    restart: always
+    deploy:
+      replicas: 1
+
+  webserver:
+    container_name: webserver
+    build:
+      context: .
+      dockerfile: airflow_with_dags.dockerfile
+    image: airflow_with_dags
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - LOAD_EX=n
+      - EXECUTOR=Celery
+      - FERNET_KEY=D8npUlkSbndhYH2nnXlkeyCFdF3nYH2rAH8lwAhrVYo=
+    ports:
+      - "9080:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+    restart: always
+    deploy:
+      replicas: 1
+
+  flower:
+    container_name: flower
+    build:
+      context: .
+      dockerfile: airflow_with_dags.dockerfile
+    image: airflow_with_dags
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - EXECUTOR=Celery
+    ports:
+      - "9081:5555"
+    command: flower
+    restart: always
+    deploy:
+      replicas: 1
+
+  scheduler:
+    container_name: scheduler
+    build:
+      context: .
+      dockerfile: airflow_with_dags.dockerfile
+    image: airflow_with_dags
+    depends_on:
+      - webserver
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - LOAD_EX=n
+      - EXECUTOR=Celery
+      - FERNET_KEY=D8npUlkSbndhYH2nnXlkeyCFdF3nYH2rAH8lwAhrVYo=
+    command: scheduler
+    restart: always
+    deploy:
+      replicas: 1
+
+  worker:
+    build:
+      context: .
+      dockerfile: airflow_with_dags.dockerfile
+    image: airflow_with_dags
+
+    depends_on:
+      - scheduler
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - LOAD_EX=n
+      - EXECUTOR=Celery
+      - FERNET_KEY=D8npUlkSbndhYH2nnXlkeyCFdF3nYH2rAH8lwAhrVYo=
+    command: worker
+    restart: always
+
