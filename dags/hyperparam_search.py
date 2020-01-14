@@ -109,10 +109,10 @@ aggregation = PythonOperator(dag=dag,
 param_grid = dict()
 param_grid["n_estimators"] = [100]
 param_grid["criterion"] = ["gini", "entropy"]
-param_grid["max_depth"] = [None, 2, 4]
+# param_grid["max_depth"] = [None, 2, 4]
 param_grid["max_features"] = ["auto", "log2", None]
 param_grid["bootstrap"] = [True, False]
-param_grid["ccp_alpha"] = [0., 0.32]
+# param_grid["ccp_alpha"] = [0., 0.32]
 param_grid["random_state"] = [0]
 param_grid["n_jobs"] = [1]
 
