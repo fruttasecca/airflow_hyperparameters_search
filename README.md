@@ -39,7 +39,7 @@ How to use this for yourself:
 2) Build your image by modifying docker/airflow_with_dags.dockerfile accordingly. If
 you push new DAGS and want to rebuild to pull DAGs from your repository
 without rebuilding the whole image I suggest to use  
-``docker build --build-arg date=`date +%s` -f airflow_with_dags.dockerfile .``
+``docker build --build-arg DATE=`date +%s` -f airflow_with_dags.dockerfile .``
 3) Launch by going in /docker and using `docker-compose up` or  
 `docker stack deploy --compose-file=docker-compose.yml flow`
 4) Keep track of progress on the airflow web interface at 127.0.0.1:9080 and
